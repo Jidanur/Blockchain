@@ -1,6 +1,5 @@
 
-////////////////// running the code/////////////////////
-# run-
+# running the code-
     python3 blockchain.py <knowpeer host> <knowpeer port> <port>
 
 
