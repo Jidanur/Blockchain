@@ -1,7 +1,3 @@
-###################################
-#MD JIDANUR RAHMAN - ID# 7895504
-# ASSIGNMENT-3 ------- 3010--
-##################################
 
 import hashlib,socket,sys,json,os,uuid,threading,time,random
 from time import sleep
