@@ -1,12 +1,14 @@
 
 import hashlib,socket,sys,json,os,uuid,threading,time,random
+import argparse
+
 from time import sleep
 
 #######################   MINING THREADS  #############################
 
-words = open('/usr/share/dict/words')
-allWords = list(words.readlines())
-words.close()
+#words = open('/usr/share/dict/words')
+# allWords = list(words.readlines())
+# words.close()
 def sendWords():
     sleep(2) # wait some time to start
     while(True):
@@ -432,6 +434,31 @@ def handle_requests(request,addr):
 
 #################################################################################
 
+########################## Arguments handler ############################
+
+def args_handle(paramters):
+    parser = argparse.ArgumentParser(description="Process input parameters")
+    parser.add_argument("-p", required=True ,help="port number current process socket gonna bind with" ,dest='port', nargs=1, type=int)
+    parser.add_argument("-m","--mining", help="if peer going to mine", action="store_true")
+    parser.add_argument("-c","--cuda", help="if use CUDA for mining", action="store_true")
+
+    #Either of them must be given in order to start the blockchain
+    group = parser.add_mutually_exclusive_group(required = True)
+    group.add_argument("-k", help=" well-known peer host and port who is part of blockchain", nargs=2 ,dest="known_peer")
+    group.add_argument("-i","--initial", help="intial peer: if this is the first peer which is starting the blockchain", action="store_true")
+
+
+    args = parser.parse_args(paramters)
+    return args
+
+
+
+
+
+########################## ################### ############################
+
+
+
 
 '''-----------------------------MAIN THREAD-------------------------------------'''
 
@@ -444,14 +471,28 @@ last_block_hash = "" # last block's hash
 DIFFICULTY = 9 # dificulty for block hashing
 
 
-peerhost = os.environ["HOST"] # host of current server this code is running
-peerPort = int(sys.argv[3])  #port 
 
-# know peer where we connect our network from
-known_peer = sys.argv[1],int(sys.argv[2])
+#process the arguments
+arguments = args_handle(sys.argv[1:])
+
+#port 
+peerhost = socket.gethostname() # host of current server this code is running
+peerPort = arguments.port[0]
+
+print(peerhost,peerPort)
 
 peer_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 peer_socket.bind(("",peerPort))
+
+# know peer where we connect our network from
+known_peer =[]
+
+#if initial blockchain peer then no known peers
+if arguments.initial:
+    print("Initial peer")
+else:
+    known_peer = arguments.known_peer
+
 
 
 ####### flooding thread start################
