@@ -447,7 +447,7 @@ def args_handle(paramters):
     #Either of them must be given in order to start the blockchain
     group = parser.add_mutually_exclusive_group(required = True)
     group.add_argument("-k", help=" well-known peer host and port who is part of blockchain", nargs=2 ,dest="known_peer")
-    group.add_argument("-i", help="intial peer: if this is the first peer which is starting the blockchain", nargs= 1 , dest="webPort")
+    group.add_argument("-i", help="intial peer: if this is the first peer which is starting the blockchain", nargs= 1 , dest="webPort", type=int)
 
 
     args = parser.parse_args(paramters)
@@ -487,8 +487,10 @@ peer_socket.bind(("",peerPort))
 known_peer =[]
 
 #if initial blockchain peer then no known peers
-if arguments.initial:
+if arguments.webPort:
     print("Initial peer")
+    web_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    web_socket.bind(("", arguments.webPort[0]))
 else:
     known_peer = arguments.known_peer
 
