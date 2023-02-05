@@ -366,6 +366,8 @@ def add_peer(req):
 def handle_requests(request,addr):   
     request = request.decode('utf-8')
 
+    print(request)
+
     req = {}
     reply = {}
 
@@ -445,14 +447,11 @@ def args_handle(paramters):
     #Either of them must be given in order to start the blockchain
     group = parser.add_mutually_exclusive_group(required = True)
     group.add_argument("-k", help=" well-known peer host and port who is part of blockchain", nargs=2 ,dest="known_peer")
-    group.add_argument("-i","--initial", help="intial peer: if this is the first peer which is starting the blockchain", action="store_true")
+    group.add_argument("-i", help="intial peer: if this is the first peer which is starting the blockchain", nargs= 1 , dest="webPort")
 
 
     args = parser.parse_args(paramters)
     return args
-
-
-
 
 
 ########################## ################### ############################
@@ -518,13 +517,13 @@ peer_lock = threading.Lock()
 
 
 ####### MINING THREAD################
-wordsToMine = [] # list of words to mine
+# wordsToMine = [] # list of words to mine
 
-word_adder = threading.Thread(target=sendWords)
-word_adder.start()
+# word_adder = threading.Thread(target=sendWords)
+# word_adder.start()
 
-mining_thread = threading.Thread(target=mineBlocks)
-mining_thread.start()
+# mining_thread = threading.Thread(target=mineBlocks)
+# mining_thread.start()
 
 ######################################
 
