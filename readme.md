@@ -8,11 +8,11 @@ The `listen_web()` thread opens a web page for the peer, which displays the curr
 
 # Running the code-
 ## Arguments
-- i <webPage_port>: if the peer starts the blockchain, it should use this along with a port to open a TCP connection.
-- k <knowpeer host>: well-known peer host and port who is part of the blockchain.
-- p <port>: port number that this program's socket will bind with.
-- m: if the peer is going to be used for mining.
-- c: enables CUDA for mining.
+-i <webPage_port>: if the peer starts the blockchain, it should use this along with a port to open a TCP connection.
+-k <knowpeer host>: well-known peer host and port who is part of the blockchain.
+-p <port>: port number that this program's socket will bind with.
+-m: if the peer is going to be used for mining.
+-c: enables CUDA for mining.
 
 **Initial Peer Example with Miner**
 
