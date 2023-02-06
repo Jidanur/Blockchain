@@ -1,14 +1,26 @@
 
 # running the code-
-    python3 blockchain.py <knowpeer host> <knowpeer port> <port>
+    
+    
+    ##Arguments
 
+        -i <webPage_port>: if the peer starts the blockchain, it should use this along with a port to open a TCP connection.
+        -k <knowpeer host>: well-known peer host and port who is part of the blockchain.
+        -p <port>: port number that this program's socket will bind with.
+        -m: if the peer is going to be used for mining.
+        -c: enables CUDA for mining.
 
-    # knowpeer host- well-known peer host who is part of blockchain
-    # knowpeer port - well-known port host who is part of blockchain
-    # port - port number this program's socket gonna bind with
+    **Initial Peer Example with Miner**
 
-    example-
-        python3 blockchain.py silicon.cs.umanitoba 8999 8453
+        python3 blockchain.py -i 8001 -p 8999 -m
+
+    where the web page exists at localhost:8001 and can be connected to the chain through port 8999.
+    
+    **General Peer Example**
+
+        python3 blockchain.py -k localhost 8999 -p 8002
+
+    which connects to peer 8999 on localhost through port 8002.
 
 
 
@@ -17,6 +29,8 @@
     Structure-
         # Always running threads- 
             * Main thread is always running for receving messages from peers
+
+            * listen_web() thread running if the peer is the initital peer then added which shows the webPage for chain and peerList through TCP 
 
             * flood_thread() is a scheduled task which runs every 30s and sends flood to know peer when joining
 
