@@ -185,7 +185,8 @@ def flood_thread():
     }
     #send 1st flood msg to well-know peer when joining the network
     flood_msg_bytes = json.dumps(flood_msg)
-    peer_socket.sendto(flood_msg_bytes.encode(),known_peer)
+    if known_peer:
+        peer_socket.sendto(flood_msg_bytes.encode(),known_peer)
     
     #every 30s flood so we connected to known peers
     while True:
@@ -303,6 +304,11 @@ recent_repeated_flood_IDs = []
 
 def flood_reply(request):
 
+    #if started with initial peer
+    if len(peer_list) == 0:
+        add_peer(request)
+
+
     #flood repeater
     global recent_repeated_flood_IDs
     #flood wasn't received before then repeat the flood msg to all known peers
@@ -354,11 +360,67 @@ def add_peer(req):
         if peer[0] == curr_peer[0] and peer[1] == curr_peer[1]:
             peer_exists = True
 
-    if not peer_exists:
+    if not peer_exists and curr_peer[1] != peerPort:
         peer_list.append(curr_peer)
         peer_list_lastPing.append([curr_peer,0])
 
-#################################################################################    
+#################################################################################
+
+#initial socket to listen for webPage request
+def listen_web():   
+    while True:
+        try: 
+            print("accepted")
+            conn, web_addr = web_socket.accept()
+            handle_get(conn,web_addr)
+        except Exception as e:
+            print(e)
+            web_socket.close()
+            os._exit(1)
+
+
+
+def handle_get(client, addr):
+    request = client.recv(1024)
+    request = request.decode("utf-8")
+
+    print(request)
+
+    headers = request.split('\n')
+    req_type = headers[0].split(" ")[0]
+    
+
+    response = "HTTP/1.1 200 OK\n"
+    contents = ""
+
+    if req_type == "GET":
+        filename = headers[0].split()[1]
+        try:
+            if filename == "/chain":
+                contents = json.dumps(chain)
+                response += "Content-Type: application/json"
+            elif filename == "/peerList":
+                contents = json.dumps(peer_list)
+                response += "Content-Type: application/json"
+            else:
+                file = open("index.html")
+                contents = file.read()
+                file.close()
+
+            
+        except Exception as e:
+            print(e)
+            response = 'HTTP/1.1 404 NOT FOUND\n\nFile Not Found'
+        else:
+            response += "content-length: " + str(len(contents)) +"\n"
+            response += "\n\n" + contents
+    
+    client.sendall(response.encode("utf-8"))
+    client.close()
+        
+
+
+
 
 
 ########################## REQUEST HANDLER ############################
@@ -461,7 +523,18 @@ def args_handle(paramters):
 
 '''-----------------------------MAIN THREAD-------------------------------------'''
 
-chain= []   # blocks list
+chain= [{    "height": 7,"minedBy": "MAXWELL","nonce": 383748,"messages": ["Hello, how are you?","I hope you are doing well."],
+    "hash": "0x7f8a938d27f9c4938dkjfd98d8a39487"},
+    {
+    "height": 9,
+    "minedBy": "ASHLEY",
+    "nonce": 294837,
+    "messages": [
+      "Good morning!",
+      "It's a beautiful day today."
+    ],
+    "hash": "0x9d8fh9e8d9hf9d8f9h9d9f8d8a399df8"
+  }]   # blocks list
 peer_list = []  # list of peers
 peer_list_lastPing = [] # last ping time when peers sent flood
 
@@ -484,15 +557,22 @@ peer_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 peer_socket.bind(("",peerPort))
 
 # know peer where we connect our network from
-known_peer =[]
+known_peer = ()
 
 #if initial blockchain peer then no known peers
 if arguments.webPort:
-    print("Initial peer")
+    print("Initial peer, {}".format(arguments.webPort[0]))
     web_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    web_socket.bind(("", arguments.webPort[0]))
+    web_socket.bind(("localhost", arguments.webPort[0]))
+
+    #dedicated thread to handle web UI requests
+    webPage_thread = threading.Thread(target=listen_web)
+    webPage_thread.start()
+
+    #start listening
+    web_socket.listen(1)
 else:
-    known_peer = arguments.known_peer
+    known_peer = (arguments.known_peer[0],int(arguments.known_peer[1]))  
 
 
 

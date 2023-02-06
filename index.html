@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <script>
+      function loadJSON() {
+        var xhr = new XMLHttpRequest();
+        var xhr_peer = new XMLHttpRequest();
+        xhr.open("GET", "chain", true);
+        xhr_peer.open("GET", "peerList", true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            displayData(data);
+          }
+        };
+
+        xhr_peer.onreadystatechange = function(){
+            if (xhr_peer.readyState === 4 && xhr_peer.status === 200) {
+                var data_peer = JSON.parse(xhr_peer.responseText);
+                displayData_peer(data_peer);
+            }
+        };
+        xhr.send();
+        xhr_peer.send();
+      }
+
+      function displayData_peer(data){
+        var table_peer = document.getElementById("table_peer");
+
+        var header_row = table_peer.createTHead().insertRow();
+        var headerCell1 = header_row.insertCell();
+        var headerCell2 = header_row.insertCell();
+        headerCell1.innerHTML = "Host";
+        headerCell2.innerHTML = "Address";
+        headerCell1.style.border = "1px solid black";
+        headerCell2.style.border = "1px solid black";
+
+        for (var i = 0; i < data.length; i++) {
+            var row = table_peer.insertRow();
+
+            for(var k in data[i]){
+                var cell = row.insertCell();
+                cell.innerHTML = data[i][k];
+                cell.style.border = "1px solid black";
+               
+            }
+        }
+
+      }
+
+      function displayData(data) {
+        //var table = "<table><tr><th>Height</th><th>Mined By</th><th>Nonce</th><th>Hash</th></tr>";
+        var theTable =  document.getElementById("table")
+
+         // Create header row
+        var headerRow = theTable.createTHead().insertRow();
+
+        // Create header cells
+        var headerCell1 = headerRow.insertCell();
+        var headerCell2 = headerRow.insertCell();
+        var headerCell3 = headerRow.insertCell();
+        var headerCell4 = headerRow.insertCell();
+        var headerCell5 = headerRow.insertCell();
+
+        // Add header text
+        headerCell1.innerHTML = "Height";
+        headerCell2.innerHTML = "minedBy";
+        headerCell3.innerHTML = "nonce";
+        headerCell4.innerHTML = "messages";
+        headerCell5.innerHTML = "hash";
+
+    
+        headerCell1.style.border = "1px solid black";
+        headerCell2.style.border = "1px solid black";
+        headerCell3.style.border = "1px solid black";
+        headerCell4.style.border = "1px solid black";
+        headerCell5.style.border = "1px solid black";
+
+
+        for (var i = 0; i < data.length; i++) {
+            var row = theTable.insertRow();
+
+            for(var k in data[i]){
+                var cell = row.insertCell();
+                cell.innerHTML = data[i][k];
+                cell.style.border = "1px solid black";
+               
+            }
+
+        }
+      }
+    </script>
+  </head>
+  <body onload= "loadJSON()">
+    <h2 style="font-weight: bold;"> Peer connected in the blockchain</h2>
+    <table id="table_peer" style="border-collapse: collapse;"></table>
+    <h2 style="font-weight: bold;">The CHAIN</h2>
+    <table id="table" style="border-collapse: collapse;"></table>
+  </body>
+</html>
