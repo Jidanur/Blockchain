@@ -1,8 +1,7 @@
 
 # running the code-
-    
-    
-    ##Arguments
+
+    `## Arguments`
 
         -i <webPage_port>: if the peer starts the blockchain, it should use this along with a port to open a TCP connection.
         -k <knowpeer host>: well-known peer host and port who is part of the blockchain.
@@ -10,15 +9,15 @@
         -m: if the peer is going to be used for mining.
         -c: enables CUDA for mining.
 
-    **Initial Peer Example with Miner**
+    `**Initial Peer Example with Miner**`
 
-        python3 blockchain.py -i 8001 -p 8999 -m
+        `python3 blockchain.py -i 8001 -p 8999 -m`
 
     where the web page exists at localhost:8001 and can be connected to the chain through port 8999.
     
-    **General Peer Example**
+    `**General Peer Example**`
 
-        python3 blockchain.py -k localhost 8999 -p 8002
+        `python3 blockchain.py -k localhost 8999 -p 8002`
 
     which connects to peer 8999 on localhost through port 8002.
 
