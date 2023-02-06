@@ -10,10 +10,12 @@
 **Initial Peer Example with Miner**
     python3 blockchain.py -i 8001 -p 8999 -m
 
+
 The above command starts the peer with a webPage at localhost:8001 that can be connected to the chain through the 8999 port. The peer will also be used for mining.
     
-**General Peer Example**`
+**General Peer Example**
     python3 blockchain.py -k localhost 8999 -p 8002`
+
 
 The above command connects to peer 8999 on localhost through the 8002 port.
 
